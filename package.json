@@ -17,6 +17,7 @@
   "contributers": [
     "Ankur Oberoi <aoberoi@gmail.com>"
   ],
+  "main": "ti-mocha.js",
   "scripts": [
     "ti-mocha.js"
   ],
