@@ -5227,16 +5227,22 @@ exports.highlightTags = function(name) {
 /**
  * Node shims.
  *
+ * skip: true
+ *
  * These are meant only to allow
  * mocha.js to run untouched, not
  * to allow running node code in
  * the browser.
  */
 
+
+/**
+ * Shim for process
+ */
+
 process = {};
 process.exit = function(status){};
 process.stdout = {};
-global = window;
 
 /**
  * next tick implementation.
@@ -5287,8 +5293,15 @@ process.on = function(e, fn){
     };
   }
 };
+/**
+ * Browser based bootup
+ *
+ * skip: true
+ *
+ * Creates a Mocha instance that is ready to go with the options
+ * that make sense inside the browser.
+ */
 
-// boot
 ;(function(){
 
   /**
@@ -5337,4 +5350,6 @@ process.on = function(e, fn){
     });
   };
 })();
+
+global = window;
 })();

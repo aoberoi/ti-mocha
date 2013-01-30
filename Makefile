@@ -15,7 +15,6 @@ mocha.js: $(SRC) $(SUPPORT) lib/browser/diff.js
 	@cat \
 	  support/head.js \
 	  _mocha.js \
-	  support/tail.js \
 	  support/foot.js \
 	  > mocha.js
 
