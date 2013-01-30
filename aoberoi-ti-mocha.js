@@ -1590,7 +1590,7 @@ require.register("reporters/html.js", function(module, exports, require){
 
 var Base = require('./base')
   , utils = require('../utils')
-  , Progress = require('../shims/browser/progress')
+  , Progress = require('../shims/titanium/progress')
   , escape = utils.escape;
 
 /**
