@@ -11,13 +11,22 @@ lib/browser/diff.js: node_modules/diff/diff.js
 	cp node_modules/diff/diff.js lib/browser/diff.js
 
 mocha.js: $(SRC) $(SUPPORT) lib/browser/diff.js
-	@node support/compile $(SRC)
+	@node support/compile --browser $(SRC)
 	@cat \
 	  support/head.js \
 	  _mocha.js \
 	  support/tail.js \
 	  support/foot.js \
 	  > mocha.js
+
+aoberoi-ti-mocha.js: $(SRC) $(SUPPORT) lib/browser/diff.js
+	@node support/compile --titanium $(SRC)
+	@cat \
+	  support/head.js \
+	  _aoberoi-ti-mocha.js \
+	  support/tail.js \
+	  support/foot.js \
+	  > aoberoi-ti-mocha.js
 
 clean:
 	rm -f mocha.js

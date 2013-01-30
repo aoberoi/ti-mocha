@@ -9,7 +9,8 @@ var fs = require('fs');
  * Arguments.
  */
 
-var args = process.argv.slice(2)
+var target = process.argv[2],
+    args = process.argv.slice(3)
   , pending = args.length
   , files = {};
 
@@ -70,7 +71,15 @@ function parseInheritance(js) {
  */
 
 function compile() {
-  var buf = '';
+  var outputFile,
+      buf = '';
+  if (target === '--browser') {
+    outputFile = '_mocha.js';
+  } else if (target === '--titanium') {
+    outputFile = '_aoberoi-ti-mocha.js';
+  } else {
+    throw new Error('target not specified, use --browser or --titanium as the first argument');
+  }
   buf += '\n// CommonJS require()\n\n';
   buf += browser.require + '\n\n';
   buf += 'require.modules = {};\n\n';
@@ -84,9 +93,9 @@ function compile() {
     buf += js;
     buf += '\n}); // module: ' + file + '\n';
   });
-  fs.writeFile('_mocha.js', buf, function(err){
+  fs.writeFile(outputFile, buf, function(err){
     if (err) throw err;
-    console.log('  \u001b[90m create : \u001b[0m\u001b[36m%s\u001b[0m', 'mocha.js');
+    console.log('  \u001b[90m create : \u001b[0m\u001b[36m%s\u001b[0m', outputFile);
     console.log();
   });
 }

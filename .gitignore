@@ -5,6 +5,7 @@ node_modules
 *.sock
 testing
 _mocha.js
+_aoberoi-ti-mocha.js
 test.js
 my-reporter.js
 *.sw*
