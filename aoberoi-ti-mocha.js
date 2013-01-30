@@ -4663,12 +4663,13 @@ Progress.prototype.draw = function(ctx){
 require.register("shims/titanium/tty.js", function(module, exports, require){
 
 exports.isatty = function(){
-  return true;
+  return false;
 };
 
-exports.getWindowSize = function(){
-  return [window.innerHeight, window.innerWidth];
-};
+//exports.getWindowSize = function(){
+//  return [window.innerHeight, window.innerWidth];
+//};
+
 }); // module: shims/titanium/tty.js
 
 require.register("suite.js", function(module, exports, require){
