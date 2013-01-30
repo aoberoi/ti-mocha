@@ -48,7 +48,7 @@ var target = process.argv[2],
 if (target === '--browser') {
   target = TARGET.BROWSER;
 } else if (target === '--titanium') {
-  target = TARGET.TITIANUM;
+  target = TARGET.TITANIUM;
 } else {
   throw new Error('target invalid, use --browser or --titanium as the first argument');
 }
@@ -114,7 +114,7 @@ function compile() {
   var outputFile = target.outputFile,
       buf = '';
 
-  // add a CommonJS require() implementation
+  // start with a CommonJS require() implementation
   buf += '\n// CommonJS require()\n\n';
   buf += browser.require + '\n\n';
   buf += 'require.modules = {};\n\n';
@@ -133,7 +133,7 @@ function compile() {
     buf += '\n}); // module: ' + file + '\n';
   });
 
-  // start with global.js and boot.js
+  // add global.js and boot.js
   buf += files["lib/" + target.requirePath + "/global.js"];
   buf += files["lib/" + target.requirePath + "/boot.js"];
 
