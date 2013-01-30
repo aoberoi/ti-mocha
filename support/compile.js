@@ -70,6 +70,17 @@ function parseInheritance(js) {
  * Compile the files.
  */
 
+/*
+ * Things to remove when compiling for titanium:
+ * require functions (but do require's work unmodified? probably not, probably need scoping)
+ * EventEmitter implementation. use require('tipm-emitter2')
+ * Array.prototype.reduce already exists, no need for modules such as 'RedVentures-reduce'
+ * abstract any references to `root` object. do so by testing for existence of Titanium object and otherwise fallback
+ * to window
+ * something about http response Content-Type headers
+ * possibly assignment of module.exports
+ */
+
 function compile() {
   var outputFile,
       buf = '';

@@ -5225,6 +5225,11 @@ exports.highlightTags = function(name) {
 
 }); // module: utils.js
 /**
+ * Titanium shim
+ */
+var window = exports;
+
+/**
  * Node shims.
  *
  * These are meant only to allow
