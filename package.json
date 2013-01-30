@@ -1,5 +1,5 @@
 {
-  "name": "ti-mocha",
+  "name": "aoberoi-ti-mocha",
   "repo": "aoberoi/ti-mocha",
   "version": "1.8.1",
   "description": "titanium port of mocha: simple, flexible, fun test framework",
@@ -17,9 +17,9 @@
   "contributers": [
     "Ankur Oberoi <aoberoi@gmail.com>"
   ],
-  "main": "ti-mocha.js",
+  "main": "aoberoi-ti-mocha.js",
   "scripts": [
-    "ti-mocha.js"
+    "aoberoi-ti-mocha.js"
   ],
   "dependencies": {
   },
