@@ -7,10 +7,10 @@ SUPPORT = $(wildcard support/*.js)
 
 all: mocha.js
 
-lib/browser/diff.js: node_modules/diff/diff.js
-	cp node_modules/diff/diff.js lib/browser/diff.js
+lib/shims/browser/diff.js: node_modules/diff/diff.js
+	cp node_modules/diff/diff.js lib/shims/browser/diff.js
 
-mocha.js: $(SRC) $(SUPPORT) lib/browser/diff.js
+mocha.js: $(SRC) $(SUPPORT) lib/shims/browser/diff.js
 	@node support/compile --browser $(SRC)
 	@cat \
 	  support/head.js \
@@ -18,12 +18,11 @@ mocha.js: $(SRC) $(SUPPORT) lib/browser/diff.js
 	  support/foot.js \
 	  > mocha.js
 
-aoberoi-ti-mocha.js: $(SRC) $(SUPPORT) lib/browser/diff.js
+aoberoi-ti-mocha.js: $(SRC) $(SUPPORT)
 	@node support/compile --titanium $(SRC)
 	@cat \
 	  support/head.js \
 	  _aoberoi-ti-mocha.js \
-	  support/tail.js \
 	  support/foot.js \
 	  > aoberoi-ti-mocha.js
 

@@ -18,6 +18,22 @@
  */
 
 var fs = require('fs');
+var _s = require('underscore.string');
+
+/**
+ * Constants.
+ */
+
+var TARGET = {
+  BROWSER: {
+    requirePath: 'shims/browser',
+    outputFile: '_mocha.js'
+  },
+  TITANIUM: {
+    requirePath: 'shims/titanium',
+    outputFile: '_aoberoi-ti-mocha.js'
+  }
+};
 
 /**
  * Arguments.
@@ -27,6 +43,15 @@ var target = process.argv[2],
     args = process.argv.slice(3)
   , pending = args.length
   , files = {};
+
+// validate target
+if (target === '--browser') {
+  target = TARGET.BROWSER;
+} else if (target === '--titanium') {
+  target = TARGET.TITIANUM;
+} else {
+  throw new Error('target invalid, use --browser or --titanium as the first argument');
+}
 
 console.log('');
 
@@ -57,13 +82,14 @@ function parse(js) {
  */
 
 function parseRequires(js) {
+  var requirePath = target.requirePath;
   return js
-    .replace(/require\('events'\)/g, "require('browser/events')")
-    .replace(/require\('debug'\)/g, "require('browser/debug')")
-    .replace(/require\('path'\)/g, "require('browser/path')")
-    .replace(/require\('diff'\)/g, "require('browser/diff')")
-    .replace(/require\('tty'\)/g, "require('browser/tty')")
-    .replace(/require\('fs'\)/g, "require('browser/fs')")
+    .replace(/require\('events'\)/g, "require('" + requirePath + "/events')")
+    .replace(/require\('debug'\)/g, "require('" + requirePath + "/debug')")
+    .replace(/require\('path'\)/g, "require('" + requirePath + "/path')")
+    .replace(/require\('diff'\)/g, "require('" + requirePath + "/diff')")
+    .replace(/require\('tty'\)/g, "require('" + requirePath + "/tty')")
+    .replace(/require\('fs'\)/g, "require('" + requirePath + "/fs')");
 }
 
 /**
@@ -85,10 +111,10 @@ function parseInheritance(js) {
  */
 
 function compile() {
-  var outputFile,
+  var outputFile = target.outputFile,
       buf = '';
 
-  // start file with a CommonJS require() implementation
+  // add a CommonJS require() implementation
   buf += '\n// CommonJS require()\n\n';
   buf += browser.require + '\n\n';
   buf += 'require.modules = {};\n\n';
@@ -101,25 +127,15 @@ function compile() {
     var js = files[file];
     if (js.indexOf('skip: true') !== -1) return;
     file = file.replace('lib/', '');
+    if (_s.startsWith(file, 'shims') && !_s.startsWith(file, target.requirePath)) return;
     buf += '\nrequire.register("' + file + '", function(module, exports, require){\n';
     buf += js;
     buf += '\n}); // module: ' + file + '\n';
   });
 
-  // target specific actions:
-  //   assign outputFile name
-  //   all global.js and boot.js
-  if (target === '--browser') {
-    outputFile = '_mocha.js';
-    buf += files['lib/browser/global.js'];
-    buf += files['lib/browser/boot.js'];
-  } else if (target === '--titanium') {
-    outputFile = '_aoberoi-ti-mocha.js';
-    buf += files['lib/titanium/global.js'];
-    buf += files['lib/titanium/boot.js'];
-  } else {
-    throw new Error('target not specified, use --browser or --titanium as the first argument');
-  }
+  // start with global.js and boot.js
+  buf += files["lib/" + target.requirePath + "/global.js"];
+  buf += files["lib/" + target.requirePath + "/boot.js"];
 
   // write out compiled file
   fs.writeFile(outputFile, buf, function(err){

@@ -14,7 +14,7 @@
     "tipm"
   ],
   "author": "TJ Holowaychuk <tj@vision-media.ca>",
-  "contributers": [
+  "contributors": [
     "Ankur Oberoi <aoberoi@gmail.com>"
   ],
   "main": "aoberoi-ti-mocha.js",
@@ -22,9 +22,9 @@
     "aoberoi-ti-mocha.js"
   ],
   "dependencies": {
+    "underscore.string": "~2.3.1"
   },
-  "development": {
-  },
+  "development": {},
   "guid": "xxxxxxx-xxxxxx-xxxxxx",
   "minsdk": "2.1.0"
 }
