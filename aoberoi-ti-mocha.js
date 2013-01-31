@@ -1028,11 +1028,11 @@ var tty = require('shims/titanium/tty')
  * Save timer references to avoid Sinon interfering (see GH-237).
  */
 
-var Date = global.Date
-  , setTimeout = global.setTimeout
-  , setInterval = global.setInterval
-  , clearTimeout = global.clearTimeout
-  , clearInterval = global.clearInterval;
+//var Date = global.Date = Date
+//  , setTimeout = global.setTimeout = setTimeout
+//  , setInterval = global.setInterval = setInterval
+//  , clearTimeout = global.clearTimeout = clearTimeout
+//  , clearInterval = global.clearInterval = clearInterval;
 
 /**
  * Check if both stdio streams are associated with a tty.
@@ -5341,7 +5341,11 @@ process.nextTick = function(f){
  * Remove uncaughtException listener.
  */
 
-process.removeListener = function(e){};
+process.removeListener = function(e){
+  if ('uncaughtException' == e) {
+    console.warn('there are no uncaughtException events in the Titanium environment');
+  }
+};
 
 /**
  * Implements uncaughtException listener.
