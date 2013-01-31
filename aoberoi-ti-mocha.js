@@ -3288,11 +3288,11 @@ var EventEmitter = require('shims/titanium/events').EventEmitter
  * Save timer references to avoid Sinon interfering (see GH-237).
  */
 
-var Date = global.Date
-  , setTimeout = global.setTimeout
-  , setInterval = global.setInterval
-  , clearTimeout = global.clearTimeout
-  , clearInterval = global.clearInterval;
+//var Date = global.Date
+//  , setTimeout = global.setTimeout
+//  , setInterval = global.setInterval
+//  , clearTimeout = global.clearTimeout
+//  , clearInterval = global.clearInterval;
 
 /**
  * Object#toString().
