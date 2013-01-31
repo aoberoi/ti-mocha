@@ -5403,7 +5403,7 @@ process.on = function(e, fn){
    * Reimplementation of Mocha#loadFiles
    */
 
-  mocha.loadFiles = function() {
+  mocha.loadFiles = function(fn) {
     var self = this;
     var suite = this.suite;
     var pending = this.files.length;
