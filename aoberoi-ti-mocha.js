@@ -1028,11 +1028,11 @@ var tty = require('shims/titanium/tty')
  * Save timer references to avoid Sinon interfering (see GH-237).
  */
 
-var Date = global.Date
-  , setTimeout = global.setTimeout
-  , setInterval = global.setInterval
-  , clearTimeout = global.clearTimeout
-  , clearInterval = global.clearInterval;
+//var Date = global.Date
+//  , setTimeout = global.setTimeout
+//  , setInterval = global.setInterval
+//  , clearTimeout = global.clearTimeout
+//  , clearInterval = global.clearInterval;
 
 /**
  * Check if both stdio streams are associated with a tty.
