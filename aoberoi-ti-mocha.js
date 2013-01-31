@@ -3465,6 +3465,9 @@ Runnable.prototype.run = function(fn){
     self.clearTimeout();
     self.duration = new Date - start;
     finished = true;
+    if (self.type === 'test') {
+      debug('test called done. err: ' + err && err.message);
+    }
     fn(err);
   }
 
@@ -3495,6 +3498,9 @@ Runnable.prototype.run = function(fn){
     this.duration = new Date - start;
     fn();
   } catch (err) {
+    if (this.type === 'test') {
+      debug('test threw error: ' + err.message);
+    }
     fn(err);
   }
 };
@@ -3846,10 +3852,12 @@ Runner.prototype.runTest = function(fn){
 
   try {
     test.on('error', function(err){
+      debug('test emitted error: ' + err);
       self.fail(test, err);
     });
     test.run(fn);
   } catch (err) {
+    debug('test threw error: ' + err.message);
     fn(err);
   }
 };
