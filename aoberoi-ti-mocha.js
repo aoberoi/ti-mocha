@@ -5328,7 +5328,11 @@ process.exit = function(code){
  * stdout is a dummy object, not a real Writable Stream
  */
 
-process.stdout = {};
+process.stdout = {
+  write: function(str) {
+    console.log(str);
+  }
+};
 
 /**
  * next tick implementation.
