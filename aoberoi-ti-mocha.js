@@ -4045,10 +4045,11 @@ function filterLeaks(ok, globals) {
 require.register("shims/titanium/debug.js", function(module, exports, require){
 
 module.exports = function(type){
-  return function(){
-    
-  }
+  return function(msg){
+    console.debug(type + ': ' + msg);
+  };
 };
+
 }); // module: shims/titanium/debug.js
 
 require.register("shims/titanium/diff.js", function(module, exports, require){
