@@ -5411,7 +5411,7 @@ process.on = function(e, fn){
       // assume that `file` is already relative to the Resources directory
       //file = path.resolve(file);
       suite.emit('pre-require', global, file, self);
-      suite.emit('require', nativeRequire(file), file, self);
+      suite.emit('require', nativeRequire(file).injectContext(global), file, self);
       suite.emit('post-require', global, file, self);
       --pending || (fn && fn());
     });
