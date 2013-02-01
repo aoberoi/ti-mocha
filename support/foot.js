@@ -1,1 +1,1 @@
-})(require);
+})(this.require || {});

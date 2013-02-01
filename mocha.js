@@ -1,4 +1,4 @@
-;(function(){
+;(function(nativeRequire){
 
 
 // CommonJS require()
@@ -1028,11 +1028,11 @@ var tty = require('shims/browser/tty')
  * Save timer references to avoid Sinon interfering (see GH-237).
  */
 
-var Date = global.Date
-  , setTimeout = global.setTimeout
-  , setInterval = global.setInterval
-  , clearTimeout = global.clearTimeout
-  , clearInterval = global.clearInterval;
+//var Date = global.Date = Date
+//  , setTimeout = global.setTimeout = setTimeout
+//  , setInterval = global.setInterval = setInterval
+//  , clearTimeout = global.clearTimeout = clearTimeout
+//  , clearInterval = global.clearInterval = clearInterval;
 
 /**
  * Check if both stdio streams are associated with a tty.
@@ -1590,7 +1590,7 @@ require.register("reporters/html.js", function(module, exports, require){
 
 var Base = require('./base')
   , utils = require('../utils')
-  , Progress = require('../shims/browser/progress')
+  , Progress = require('../shims/common/progress')
   , escape = utils.escape;
 
 /**
@@ -1861,6 +1861,8 @@ exports.JSONCov = require('./json-cov');
 exports.HTMLCov = require('./html-cov');
 exports.JSONStream = require('./json-stream');
 exports.Teamcity = require('./teamcity');
+
+exports.TiJSON = require('./ti-json');
 
 }); // module: reporters/index.js
 
@@ -3075,6 +3077,80 @@ function escape(str) {
 
 }); // module: reporters/teamcity.js
 
+require.register("reporters/ti-json.js", function(module, exports, require){
+
+/**
+ * Module dependencies.
+ */
+
+var Base = require('./base')
+  , cursor = Base.cursor
+  , color = Base.color;
+
+/**
+ * Expose `JSON`.
+ */
+
+exports = module.exports = JSONReporter;
+
+/**
+ * Initialize a new `JSON` reporter.
+ *
+ * @param {Runner} runner
+ * @api public
+ */
+
+function JSONReporter(runner) {
+  var self = this;
+  Base.call(this, runner);
+
+  var tests = []
+    , failures = []
+    , passes = [];
+
+  runner.on('test end', function(test){
+    tests.push(test);
+  });
+
+  runner.on('pass', function(test){
+    passes.push(test);
+  });
+
+  runner.on('fail', function(test){
+    failures.push(test);
+  });
+
+  runner.on('end', function(){
+    var obj = {
+        stats: self.stats
+      , tests: tests.map(clean)
+      , failures: failures.map(clean)
+      , passes: passes.map(clean)
+    };
+
+    console.log(JSON.stringify(obj, null, 2));
+  });
+}
+
+/**
+ * Return a plain-object representation of `test`
+ * free of cyclic properties etc.
+ *
+ * @param {Object} test
+ * @return {Object}
+ * @api private
+ */
+
+function clean(test) {
+  return {
+      title: test.title
+    , fullTitle: test.fullTitle()
+    , duration: test.duration
+  }
+}
+
+}); // module: reporters/ti-json.js
+
 require.register("reporters/xunit.js", function(module, exports, require){
 
 /**
@@ -3212,11 +3288,11 @@ var EventEmitter = require('shims/browser/events').EventEmitter
  * Save timer references to avoid Sinon interfering (see GH-237).
  */
 
-var Date = global.Date
-  , setTimeout = global.setTimeout
-  , setInterval = global.setInterval
-  , clearTimeout = global.clearTimeout
-  , clearInterval = global.clearInterval;
+//var Date = global.Date
+//  , setTimeout = global.setTimeout
+//  , setInterval = global.setInterval
+//  , clearTimeout = global.clearTimeout
+//  , clearInterval = global.clearInterval;
 
 /**
  * Object#toString().
@@ -4591,9 +4667,139 @@ exports.isatty = function(){
 };
 
 exports.getWindowSize = function(){
-  return [window.innerHeight, window.innerWidth];
+  return [global.innerHeight, global.innerWidth];
 };
+
 }); // module: shims/browser/tty.js
+
+require.register("shims/common/progress.js", function(module, exports, require){
+
+/**
+ * Expose `Progress`.
+ */
+
+module.exports = Progress;
+
+/**
+ * Initialize a new `Progress` indicator.
+ */
+
+function Progress() {
+  this.percent = 0;
+  this.size(0);
+  this.fontSize(11);
+  this.font('helvetica, arial, sans-serif');
+}
+
+/**
+ * Set progress size to `n`.
+ *
+ * @param {Number} n
+ * @return {Progress} for chaining
+ * @api public
+ */
+
+Progress.prototype.size = function(n){
+  this._size = n;
+  return this;
+};
+
+/**
+ * Set text to `str`.
+ *
+ * @param {String} str
+ * @return {Progress} for chaining
+ * @api public
+ */
+
+Progress.prototype.text = function(str){
+  this._text = str;
+  return this;
+};
+
+/**
+ * Set font size to `n`.
+ *
+ * @param {Number} n
+ * @return {Progress} for chaining
+ * @api public
+ */
+
+Progress.prototype.fontSize = function(n){
+  this._fontSize = n;
+  return this;
+};
+
+/**
+ * Set font `family`.
+ *
+ * @param {String} family
+ * @return {Progress} for chaining
+ */
+
+Progress.prototype.font = function(family){
+  this._font = family;
+  return this;
+};
+
+/**
+ * Update percentage to `n`.
+ *
+ * @param {Number} n
+ * @return {Progress} for chaining
+ */
+
+Progress.prototype.update = function(n){
+  this.percent = n;
+  return this;
+};
+
+/**
+ * Draw on `ctx`.
+ *
+ * @param {CanvasRenderingContext2d} ctx
+ * @return {Progress} for chaining
+ */
+
+Progress.prototype.draw = function(ctx){
+  var percent = Math.min(this.percent, 100)
+    , size = this._size
+    , half = size / 2
+    , x = half
+    , y = half
+    , rad = half - 1
+    , fontSize = this._fontSize;
+
+  ctx.font = fontSize + 'px ' + this._font;
+
+  var angle = Math.PI * 2 * (percent / 100);
+  ctx.clearRect(0, 0, size, size);
+
+  // outer circle
+  ctx.strokeStyle = '#9f9f9f';
+  ctx.beginPath();
+  ctx.arc(x, y, rad, 0, angle, false);
+  ctx.stroke();
+
+  // inner circle
+  ctx.strokeStyle = '#eee';
+  ctx.beginPath();
+  ctx.arc(x, y, rad - 1, 0, angle, true);
+  ctx.stroke();
+
+  // text
+  var text = this._text || (percent | 0) + '%'
+    , w = ctx.measureText(text).width;
+
+  ctx.fillText(
+      text
+    , x - w / 2 + 1
+    , y + fontSize / 2 - 1);
+
+  return this;
+};
+
+}); // module: shims/common/progress.js
 
 require.register("suite.js", function(module, exports, require){
 
@@ -5251,7 +5457,7 @@ process.stdout = {};
 
 process.nextTick = (function(){
   // postMessage behaves badly on IE8
-  if (window.ActiveXObject || !window.postMessage) {
+  if (global.ActiveXObject || !global.postMessage) {
     return function(fn){ fn() };
   }
 
@@ -5260,8 +5466,8 @@ process.nextTick = (function(){
   var timeouts = []
     , name = 'mocha-zero-timeout'
 
-  window.addEventListener('message', function(e){
-    if (e.source == window && e.data == name) {
+  global.addEventListener('message', function(e){
+    if (e.source == global && e.data == name) {
       if (e.stopPropagation) e.stopPropagation();
       if (timeouts.length) timeouts.shift()();
     }
@@ -5269,7 +5475,7 @@ process.nextTick = (function(){
 
   return function(fn){
     timeouts.push(fn);
-    window.postMessage(name, '*');
+    global.postMessage(name, '*');
   }
 })();
 
@@ -5279,7 +5485,7 @@ process.nextTick = (function(){
 
 process.removeListener = function(e){
   if ('uncaughtException' == e) {
-    window.onerror = null;
+    global.onerror = null;
   }
 };
 
@@ -5289,7 +5495,7 @@ process.removeListener = function(e){
 
 process.on = function(e, fn){
   if ('uncaughtException' == e) {
-    window.onerror = function(err, url, line){
+    global.onerror = function(err, url, line){
       fn(new Error(err + ' (' + url + ':' + line + ')'));
     };
   }
@@ -5309,8 +5515,8 @@ process.on = function(e, fn){
    * Expose mocha.
    */
 
-  var Mocha = window.Mocha = require('mocha'),
-      mocha = window.mocha = new Mocha({ reporter: 'html' });
+  var Mocha = global.Mocha = require('mocha'),
+      mocha = global.mocha = new Mocha({ reporter: 'html' });
 
   /**
    * Override ui to ensure that the ui functions are initialized.
@@ -5319,7 +5525,7 @@ process.on = function(e, fn){
 
   mocha.ui = function(ui){
     Mocha.prototype.ui.call(this, ui);
-    this.suite.emit('pre-require', window, null, this);
+    this.suite.emit('pre-require', global, null, this);
     return this;
   };
 
@@ -5341,7 +5547,7 @@ process.on = function(e, fn){
     var options = mocha.options;
     mocha.globals('location');
 
-    var query = Mocha.utils.parseQuery(window.location.search || '');
+    var query = Mocha.utils.parseQuery(global.location.search || '');
     if (query.grep) mocha.grep(query.grep);
     if (query.invert) mocha.invert();
 
@@ -5352,4 +5558,4 @@ process.on = function(e, fn){
   };
 })();
 
-})();
+})(this.require || {});

@@ -127,7 +127,7 @@ function compile() {
     var js = files[file];
     if (js.indexOf('skip: true') !== -1) return;
     file = file.replace('lib/', '');
-    if (_s.startsWith(file, 'shims') && !_s.startsWith(file, target.requirePath)) return;
+    if (_s.startsWith(file, 'shims') && ! (_s.startsWith(file, target.requirePath) || _s.startsWith(file, 'shims/common'))) return;
     buf += '\nrequire.register("' + file + '", function(module, exports, require){\n';
     buf += js;
     buf += '\n}); // module: ' + file + '\n';
